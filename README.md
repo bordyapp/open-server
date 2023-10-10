@@ -69,3 +69,11 @@ RAM:
 CPU:
 
 ![CPU consumption](/assets/cpu-consumption.png)
+
+### Requirements
+
+- Free [Auth0](https://auth0.com/) account
+- Free [Mixpanel](https://mixpanel.com/) account
+- [Google Cloud Platform account](https://cloud.google.com) for S3
+- Mail account for SMTP
+- Single node MongoDB cluster, at least
