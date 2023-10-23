@@ -7,7 +7,7 @@ import io.bordy.storage.CloudStorage;
 import io.bordy.workspaces.WorkspaceMember;
 import io.bordy.workspaces.WorkspaceMembersRepository;
 import io.bordy.workspaces.invites.WorkspaceInvitesService;
-import io.bordy.workspaces.workspaces.WorkspacesService;
+import io.bordy.kanban.workspaces.workspaces.WorkspacesService;
 import io.quarkus.security.Authenticated;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.resteasy.reactive.RestForm;

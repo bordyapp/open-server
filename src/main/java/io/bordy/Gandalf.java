@@ -1,7 +1,7 @@
 package io.bordy;
 
 import io.bordy.workspaces.WorkspaceMembersRepository;
-import io.bordy.workspaces.WorkspacesRepository;
+import io.bordy.kanban.workspaces.workspaces.Workspace;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -14,13 +14,10 @@ public class Gandalf {
     private final static Logger logger = Logger.getLogger(Gateway.class.getName());
 
     @Inject
-    WorkspacesRepository workspacesRepository;
-
-    @Inject
     WorkspaceMembersRepository workspaceMembersRepository;
 
     public boolean youShallNotPass(UUID workspaceId, String userId) {
-        boolean isWorkspaceOwner = workspacesRepository.count(
+        boolean isWorkspaceOwner = Workspace.count(
                 "_id = ?1 and ownerId = ?2",
                 workspaceId,
                 userId

@@ -3,7 +3,7 @@ package io.bordy.users;
 import io.bordy.api.AssigneeDto;
 import io.bordy.cards.BoardListCard;
 import io.bordy.cards.cards.CardAssigneesProjection;
-import io.bordy.workspaces.Workspace;
+import io.bordy.kanban.workspaces.workspaces.Workspace;
 import io.bordy.workspaces.WorkspaceMember;
 import io.bordy.workspaces.WorkspaceMembersRepository;
 import org.bson.Document;

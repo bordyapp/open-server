@@ -5,7 +5,7 @@ import io.bordy.users.User;
 import io.bordy.workspaces.WorkspaceInvite;
 import io.bordy.workspaces.WorkspaceInviteStatus;
 import io.bordy.workspaces.WorkspaceInvitesRepository;
-import io.bordy.workspaces.workspaces.WorkspacesService;
+import io.bordy.kanban.workspaces.workspaces.WorkspacesService;
 import org.jboss.logmanager.Level;
 
 import javax.annotation.CheckForNull;

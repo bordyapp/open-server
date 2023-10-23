@@ -1,4 +1,4 @@
-package io.bordy.workspaces.workspaces;
+package io.bordy.kanban.workspaces.workspaces;
 
 import io.bordy.Shredder;
 import io.bordy.api.UserDto;
@@ -13,11 +13,12 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.*;
 
+/**
+ * @author Pavel Bodiachevskii
+ * @since 1.0.0
+ */
 @ApplicationScoped
 public class WorkspacesService {
-
-    @Inject
-    WorkspacesRepository workspacesRepository;
 
     @Inject
     WorkspaceMembersRepository workspaceMembersRepository;
@@ -84,7 +85,7 @@ public class WorkspacesService {
     }
 
     public boolean isWorkspaceOwner(@Nonnull UUID workspaceId, @Nonnull String userId) {
-        return workspacesRepository.count(
+        return Workspace.count(
                 "_id = ?1 and ownerId = ?2",
                 workspaceId,
                 userId
@@ -109,19 +110,19 @@ public class WorkspacesService {
                 creationDate
         );
 
-        workspacesRepository.persist(workspace);
+        Workspace.persist(workspace);
 
         return workspace;
     }
 
     @CheckForNull
     public Workspace find(UUID workspaceId) {
-        return workspacesRepository.findById(workspaceId);
+        return Workspace.findById(workspaceId);
     }
 
     @Nonnull
     public List<Workspace> findCreatedByUser(@Nonnull String userId) {
-        return workspacesRepository.list("ownerId", userId);
+        return Workspace.list("ownerId", userId);
     }
 
     @Transactional
@@ -130,7 +131,7 @@ public class WorkspacesService {
             @Nonnull String ownerId,
             @Nonnull String name
     ) {
-        workspacesRepository.update(
+        Workspace.update(
                         "name = ?1 and editedAt = ?2",
                         name,
                         new Date()
@@ -147,7 +148,7 @@ public class WorkspacesService {
             @Nonnull UUID workspaceId,
             @Nonnull String photoUrl
     ) {
-        workspacesRepository.update("photo", photoUrl)
+        Workspace.update("photo", photoUrl)
                 .where("_id", workspaceId);
     }
 
@@ -157,7 +158,7 @@ public class WorkspacesService {
             return;
         }
 
-        var workspace = workspacesRepository.findById(workspaceId);
+        var workspace = Workspace.<Workspace>findById(workspaceId);
         if (workspace != null) {
             shredder.deleteWorkspace(workspace);
         }
