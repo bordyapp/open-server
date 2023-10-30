@@ -1,13 +1,15 @@
 package io.bordy.users;
 
 import io.bordy.api.AssigneeDto;
+import io.bordy.api.UserDto;
 import io.bordy.cards.BoardListCard;
 import io.bordy.cards.cards.CardAssigneesProjection;
-import io.bordy.kanban.workspaces.workspaces.Workspace;
-import io.bordy.workspaces.WorkspaceMember;
-import io.bordy.workspaces.WorkspaceMembersRepository;
+import io.bordy.kanban.workspaces.members.WorkspaceMember;
+import io.bordy.kanban.workspaces.members.WorkspaceMembersService;
+import io.bordy.kanban.workspaces.workspaces.WorkspacesService;
 import org.bson.Document;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -17,13 +19,20 @@ import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/**
+ * @author Pavel Bodiachevskii
+ * @since 1.0.0
+ */
 @ApplicationScoped
 public class UsersService {
 
     private final static Logger logger = Logger.getLogger(UsersService.class.getName());
 
     @Inject
-    WorkspaceMembersRepository workspaceMembersRepository;
+    WorkspaceMembersService workspaceMembersService;
+
+    @Inject
+    WorkspacesService workspacesService;
 
     @Nonnull
     public Map<String, AssigneeDto> boardKnownAssignees(@Nonnull UUID boardId) {
@@ -53,14 +62,14 @@ public class UsersService {
     public Map<String, AssigneeDto> workspaceKnownAssignees(@Nonnull UUID workspaceId) {
         Instant start = Instant.now();
         var knownAssignees = new LinkedHashMap<String, AssigneeDto>();
-        var workspace = Workspace.<Workspace>findById(workspaceId);
+        var workspace = workspacesService.find(workspaceId);
         if (workspace != null) {
             knownAssignees.put(workspace.getOwnerId(), asAssignee(workspace.getOwnerId()));
         }
 
-        WorkspaceMember.<WorkspaceMember>find("workspaceId", workspaceId).stream()
-                .map(WorkspaceMember::getUserId)
-                .forEach(userId -> knownAssignees.put(userId, asAssignee(userId)));
+        workspaceMembersService.memberUserIdsOf(workspaceId).forEach(
+                userId -> knownAssignees.put(userId, asAssignee(userId))
+        );
 
         Instant finish = Instant.now();
         logger.info("workspaceKnownAssignees elapsed time: " + Duration.between(start, finish).toString());
@@ -68,22 +77,40 @@ public class UsersService {
     }
 
     @Nonnull
-    private AssigneeDto asAssignee(@Nonnull String userId) {
+    public AssigneeDto asAssignee(@Nonnull String userId) {
         var user = User.<User>findById(userId);
-        var workspaceMember = workspaceMembersRepository.list("userId", user.id).stream().findFirst().orElse(null);
         if (user != null) {
+            var workspaceMember = workspaceMembersService.find(user.getId());
+
             return new AssigneeDto(
-                    user.id,
+                    user.getId(),
                     workspaceMember != null ? workspaceMember.getName() : user.getNickname(),
-                    user.picture
+                    user.getPicture()
             );
         } else {
             return new AssigneeDto(
-                    user.id,
+                    userId,
                     "Deleted user",
                     ""
             );
         }
+    }
+
+    @CheckForNull
+    public UserDto asUser(@Nonnull WorkspaceMember workspaceMember) {
+        var user = User.<User>findById(workspaceMember.getUserId());
+        if (user == null) {
+            return null;
+        }
+
+        return new UserDto(
+                user.getId(),
+                user.getEmail(),
+                workspaceMember.getName(),
+                workspaceMember.getRole(),
+                workspaceMember.getResponsibilities(),
+                user.getPicture()
+        );
     }
 
 }

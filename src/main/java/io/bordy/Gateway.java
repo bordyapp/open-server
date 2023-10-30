@@ -3,6 +3,7 @@ package io.bordy;
 import io.bordy.api.*;
 import io.bordy.cards.BoardListCardsRepository;
 import io.bordy.cards.BoardListCardsService;
+import io.bordy.kanban.workspaces.members.WorkspaceMembersService;
 import io.bordy.lexorank.Lexorank;
 import io.bordy.lists.BoardList;
 import io.bordy.lists.BoardListsRepository;
@@ -37,7 +38,7 @@ public class Gateway {
     JsonWebToken jwt;
 
     @Inject
-    WorkspaceMembersRepository workspaceMembersRepository;
+    WorkspaceMembersService workspaceMembersService;
 
     @Inject
     WorkspaceElementsRepository workspaceElementsRepository;
@@ -380,23 +381,8 @@ public class Gateway {
         }
 
         // http://localhost:5173/#/invite3df53003-d5ba-45e8-91e5-94c54afaa332
-        var member = workspaceMembersRepository.list(
-                "userId = ?1 and workspaceId = ?2",
-                jwt.getSubject(),
-                invite.getWorkspaceId()
-        );
-        if (member.isEmpty()) {
-            var createdAt = new Date();
-            workspaceMembersRepository.persist(new WorkspaceMember(
-                    UUID.randomUUID(),
-                    invite.getWorkspaceId(),
-                    jwt.getSubject(),
-                    invite.getName(),
-                    invite.getRole(),
-                    invite.getResponsibilities(),
-                    createdAt,
-                    createdAt
-            ));
+        if (!workspaceMembersService.isMemberOf(invite.getWorkspaceId(), jwt.getSubject())) {
+            workspaceMembersService.create(jwt.getSubject(), invite);
 
             invite.setStatus(WorkspaceInviteStatus.ACCEPTED);
             invite.update();
@@ -544,26 +530,9 @@ public class Gateway {
 
         var assignees = Collections.<AssigneeDto>emptySet();
         if (boardListCard.getAssignees() != null) {
-            assignees = boardListCard.getAssignees().stream().map(assagnee -> {
-                var user = User.<User>findById(assagnee);
-                var workspaceMember = workspaceMembersRepository.list("userId", user.id).stream().findFirst().orElse(null);
-                if (user != null) {
-                    if (workspaceMember != null) {
-                        return new AssigneeDto(
-                                user.id,
-                                workspaceMember.getName(),
-                                user.picture
-                        );
-                    } else {
-                        return new AssigneeDto(
-                                user.id,
-                                user.getNickname(),
-                                user.picture
-                        );
-                    }
-                }
-                return null;
-            }).filter(Objects::nonNull).collect(Collectors.toSet());
+            assignees = boardListCard.getAssignees().stream()
+                    .map(assignee -> usersService.asAssignee(assignee))
+                    .collect(Collectors.toSet());
         }
         return Response.ok(new BoardListCardDto(
                 boardListCard.getId(),
@@ -632,26 +601,9 @@ public class Gateway {
         var boardListCard = boardListCardsRepository.find("_id = ?1", UUID.fromString(cardId)).firstResult();
         var assignees = Collections.<AssigneeDto>emptySet();
         if (boardListCard.getAssignees() != null) {
-            assignees = boardListCard.getAssignees().stream().map(assagnee -> {
-                var user = User.<User>findById(assagnee);
-                var workspaceMember = workspaceMembersRepository.list("userId", user.id).stream().findFirst().orElse(null);
-                if (user != null) {
-                    if (workspaceMember != null) {
-                        return new AssigneeDto(
-                                user.id,
-                                workspaceMember.getName(),
-                                user.picture
-                        );
-                    } else {
-                        return new AssigneeDto(
-                                user.id,
-                                user.getNickname(),
-                                user.picture
-                        );
-                    }
-                }
-                return null;
-            }).filter(Objects::nonNull).collect(Collectors.toSet());
+            assignees = boardListCard.getAssignees().stream()
+                    .map(assignee -> usersService.asAssignee(assignee))
+                    .collect(Collectors.toSet());
         }
         return Response.ok(new BoardListCardDto(
                 boardListCard.getId(),

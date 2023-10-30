@@ -4,6 +4,7 @@ import io.bordy.cards.BoardListCard;
 import io.bordy.cards.BoardListCardsRepository;
 import io.bordy.cards.comments.Comment;
 import io.bordy.files.File;
+import io.bordy.kanban.workspaces.members.WorkspaceMembersService;
 import io.bordy.kanban.workspaces.workspaces.Workspace;
 import io.bordy.lists.BoardList;
 import io.bordy.lists.BoardListsRepository;
@@ -27,7 +28,7 @@ public class Shredder {
     BoardListCardsRepository boardListCardsRepository;
 
     @Inject
-    WorkspaceMembersRepository workspaceMembersRepository;
+    WorkspaceMembersService workspaceMembersService;
 
     @Inject
     WorkspaceInvitesRepository workspaceInvitesRepository;
@@ -116,7 +117,7 @@ public class Shredder {
         boardListsRepository.delete("workspaceId = ?1", workspace.getId());
         workspaceElementsRepository.delete("workspaceId = ?1", workspace.getId());
         workspaceInvitesRepository.delete("workspaceId = ?1", workspace.getId());
-        workspaceMembersRepository.delete("workspaceId = ?1", workspace.getId());
+        workspaceMembersService.deleteAll(workspace.getId());
         Workspace.deleteById(workspace.getId());
         File.delete("workspaceId = ?1", workspace.getId());
         Comment.delete("workspaceId = ?1", workspace.getId());

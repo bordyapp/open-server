@@ -15,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @MongoEntity(collection="Workspace-Invites")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class WorkspaceInvite extends PanacheMongoEntityBase {
     @BsonId
     private UUID id;

@@ -1,6 +1,11 @@
 package io.bordy.kanban.workspaces.workspaces;
 
+import io.bordy.api.UserDto;
 import io.bordy.api.WorkspaceDto;
+import io.bordy.kanban.workspaces.members.WorkspaceMembersService;
+import io.bordy.users.User;
+import io.bordy.workspaces.WorkspaceInvite;
+import io.bordy.workspaces.WorkspaceInviteStatus;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Assertions;
@@ -8,10 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 @QuarkusTest
 @TestTransaction
@@ -19,6 +21,9 @@ public class WorkspacesServiceTest {
 
     @Inject
     WorkspacesService workspacesService;
+
+    @Inject
+    WorkspaceMembersService workspaceMembersService;
 
     @Test
     @DisplayName("Workspace must be created")
@@ -351,13 +356,48 @@ public class WorkspacesServiceTest {
                 expectedDate,
                 expectedDate
         );
+
+        var userId = "auth0|id";
+        var userEmail = "user@mail.com";
+        var user = new User(
+                userId,
+                userEmail,
+                "nickname",
+                ""
+        );
+        user.persist();
+
+        var userName = "User name";
+        var userRole = "User role";
+        var userResponsibilities = "User responsibilities";
+        var invite = new WorkspaceInvite(
+                UUID.randomUUID(),
+                workspace.getId(),
+                userEmail,
+                userName,
+                userRole,
+                userResponsibilities,
+                WorkspaceInviteStatus.PENDING,
+                new Date(),
+                new Date()
+        );
+        invite.persist();
+        workspaceMembersService.create(userId, invite);
+
         var expectedWorkspaceDto = new WorkspaceDto(
                 expectedId,
                 expectedName,
                 expectedPhoto,
                 expectedOwnerId,
-                Collections.emptyList(),
-                Collections.emptyList(),
+                List.of(new UserDto(
+                        userId,
+                        userEmail,
+                        userName,
+                        userRole,
+                        userResponsibilities,
+                        ""
+                )),
+                List.of(invite),
                 expectedDate,
                 expectedDate
         );

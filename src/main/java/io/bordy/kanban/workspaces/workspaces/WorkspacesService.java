@@ -1,9 +1,9 @@
 package io.bordy.kanban.workspaces.workspaces;
 
 import io.bordy.Shredder;
-import io.bordy.api.UserDto;
 import io.bordy.api.WorkspaceDto;
-import io.bordy.users.User;
+import io.bordy.kanban.workspaces.members.WorkspaceMembersService;
+import io.bordy.users.UsersService;
 import io.bordy.workspaces.*;
 
 import javax.annotation.CheckForNull;
@@ -21,7 +21,10 @@ import java.util.*;
 public class WorkspacesService {
 
     @Inject
-    WorkspaceMembersRepository workspaceMembersRepository;
+    WorkspaceMembersService workspaceMembersService;
+
+    @Inject
+    UsersService usersService;
 
     @Inject
     WorkspaceInvitesRepository workspaceInvitesRepository;
@@ -45,25 +48,9 @@ public class WorkspacesService {
 
     @Nonnull
     public WorkspaceDto toDto(@Nonnull Workspace workspace) {
-        var workspaceMembers = workspaceMembersRepository.list(
-                "workspaceId",
-                        workspace.getId()
-                ).stream()
-                .map(workspaceMember -> {
-                    var user = User.<User>findById(workspaceMember.getUserId());
-                    if (user == null) {
-                        return null;
-                    }
-
-                    return new UserDto(
-                            user.id,
-                            user.email,
-                            workspaceMember.getName(),
-                            workspaceMember.getRole(),
-                            workspaceMember.getResponsibilities(),
-                            user.picture
-                    );
-                })
+        var workspaceMembers = workspaceMembersService.membersOf(workspace.getId())
+                .stream()
+                .map(workspaceMember -> usersService.asUser(workspaceMember))
                 .filter(Objects::nonNull)
                 .toList();
         var workspaceInvites = workspaceInvitesRepository.list(

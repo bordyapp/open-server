@@ -1,4 +1,4 @@
-package io.bordy.workspaces;
+package io.bordy.kanban.workspaces.members;
 
 import io.quarkus.mongodb.panache.PanacheMongoRepositoryBase;
 

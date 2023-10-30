@@ -5,11 +5,10 @@ import io.bordy.cards.BoardListCard;
 import io.bordy.cards.BoardListCardStatus;
 import io.bordy.cards.BoardListCardsRepository;
 import io.bordy.lexorank.Lexorank;
-import io.bordy.users.User;
 import io.bordy.workspaces.WorkspaceElement;
 import io.bordy.workspaces.WorkspaceElementType;
 import io.bordy.workspaces.WorkspaceElementsRepository;
-import io.bordy.workspaces.WorkspaceMembersRepository;
+import io.bordy.users.UsersService;
 import org.bson.Document;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -34,7 +33,7 @@ public class BoardListsService {
     BoardListCardsRepository boardListCardsRepository;
 
     @Inject
-    WorkspaceMembersRepository workspaceMembersRepository;
+    UsersService usersService;
 
     @Inject
     Lexorank lexorank;
@@ -205,26 +204,9 @@ public class BoardListsService {
 
             var assignees = Collections.<AssigneeDto>emptySet();
             if (cardCopy.getAssignees() != null) {
-                assignees = cardCopy.getAssignees().stream().map(assagnee -> {
-                    var user = User.<User>findById(assagnee);
-                    var workspaceMember = workspaceMembersRepository.list("userId", user.id).stream().findFirst().orElse(null);
-                    if (user != null) {
-                        if (workspaceMember != null) {
-                            return new AssigneeDto(
-                                    user.id,
-                                    workspaceMember.getName(),
-                                    user.picture
-                            );
-                        } else {
-                            return new AssigneeDto(
-                                    user.id,
-                                    user.getNickname(),
-                                    user.picture
-                            );
-                        }
-                    }
-                    return null;
-                }).filter(Objects::nonNull).collect(Collectors.toSet());
+                assignees = cardCopy.getAssignees().stream()
+                        .map(assignee -> usersService.asAssignee(assignee))
+                        .collect(Collectors.toSet());
             }
             cardsCopy.add(new BoardListCardDto(
                     cardCopy.getId(),

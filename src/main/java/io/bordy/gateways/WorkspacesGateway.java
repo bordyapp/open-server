@@ -4,8 +4,7 @@ import io.bordy.api.CreateWorkspaceDto;
 import io.bordy.api.UpdateWorkspaceMemberDto;
 import io.bordy.api.WorkspaceDto;
 import io.bordy.storage.CloudStorage;
-import io.bordy.workspaces.WorkspaceMember;
-import io.bordy.workspaces.WorkspaceMembersRepository;
+import io.bordy.kanban.workspaces.members.WorkspaceMembersService;
 import io.bordy.workspaces.invites.WorkspaceInvitesService;
 import io.bordy.kanban.workspaces.workspaces.WorkspacesService;
 import io.quarkus.security.Authenticated;
@@ -42,7 +41,7 @@ public class WorkspacesGateway {
     WorkspaceInvitesService workspaceInvitesService;
 
     @Inject
-    WorkspaceMembersRepository workspaceMembersRepository;
+    WorkspaceMembersService workspaceMembersService;
 
     @Inject
     CloudStorage cloudStorage;
@@ -56,13 +55,7 @@ public class WorkspacesGateway {
         List<WorkspaceDto> created = workspacesService.findCreatedByUser(userId).stream()
                 .map(workspace -> workspacesService.toDto(workspace))
                 .toList();
-        List<WorkspaceDto> memberOf = workspaceMembersRepository.find(
-                "userId",
-                        userId
-                )
-                .stream()
-                .map(WorkspaceMember::getWorkspaceId)
-                .toList().stream()
+        List<WorkspaceDto> memberOf = workspaceMembersService.memberOf(userId).stream()
                 .map(workspaceId -> {
                     var workspace = workspacesService.find(workspaceId);
                     if (workspace == null) {
@@ -167,17 +160,7 @@ public class WorkspacesGateway {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
-        workspaceMembersRepository.update(
-                "name = ?1 and role = ?2 and responsibilities = ?3",
-                updateWorkspaceMemberDto.name(),
-                updateWorkspaceMemberDto.role(),
-                updateWorkspaceMemberDto.responsibilities()
-        ).where(
-                "userId = ?1 and workspaceId = ?2",
-                memberId,
-                UUID.fromString(workspaceId)
-        );
-
+        workspaceMembersService.update(workspaceId, memberId, updateWorkspaceMemberDto);
         return Response.ok().build();
     }
 
@@ -193,11 +176,7 @@ public class WorkspacesGateway {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
-        workspaceMembersRepository.delete(
-                "userId = ?1 and workspaceId = ?2",
-                memberId,
-                UUID.fromString(workspaceId)
-        );
+        workspaceMembersService.delete(workspaceId, memberId);
         return Response.ok().build();
     }
 

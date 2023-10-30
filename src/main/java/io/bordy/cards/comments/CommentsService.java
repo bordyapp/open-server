@@ -5,7 +5,7 @@ import io.bordy.gateways.comments.ReadCommentDto;
 import io.bordy.gateways.comments.UpdateCommentDto;
 import io.bordy.gateways.comments.WriteCommentDto;
 import io.bordy.users.User;
-import io.bordy.workspaces.WorkspaceMembersRepository;
+import io.bordy.kanban.workspaces.members.WorkspaceMembersRepository;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
