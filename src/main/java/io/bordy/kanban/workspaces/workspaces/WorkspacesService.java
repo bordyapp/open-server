@@ -71,6 +71,13 @@ public class WorkspacesService {
         );
     }
 
+    /**
+     * Is given user owner of given {@link Workspace}
+     *
+     * @param workspaceId workspace to check
+     * @param userId user to check
+     * @return is given user owner of given {@link Workspace}
+     */
     public boolean isWorkspaceOwner(@Nonnull UUID workspaceId, @Nonnull String userId) {
         return Workspace.count(
                 "_id = ?1 and ownerId = ?2",
@@ -79,6 +86,14 @@ public class WorkspacesService {
         ) > 0;
     }
 
+    /**
+     * Create and bind workspace to given user.
+     *
+     * @param name workspace name
+     * @param photo workspace photo
+     * @param ownerId workspace owner
+     * @return created workspace
+     */
     @Nonnull
     @Transactional
     public Workspace create(
@@ -102,16 +117,34 @@ public class WorkspacesService {
         return workspace;
     }
 
+    /**
+     * Return {@link Workspace} with given id.
+     *
+     * @param workspaceId workspace id to find for
+     * @return {@link Workspace} with given id
+     */
     @CheckForNull
     public Workspace find(UUID workspaceId) {
         return Workspace.findById(workspaceId);
     }
 
+    /**
+     * Return list of {@link Workspace} created by given user.
+     *
+     * @param userId user to check for
+     * @return list of {@link Workspace} created by given user
+     */
     @Nonnull
     public List<Workspace> findCreatedByUser(@Nonnull String userId) {
         return Workspace.list("ownerId", userId);
     }
 
+    /**
+     * Rename given {@link Workspace}.
+     * @param workspaceId workspace to rename
+     * @param ownerId workspace owner
+     * @param name new workspace name
+     */
     @Transactional
     public void rename(
             @Nonnull UUID workspaceId,
@@ -130,6 +163,12 @@ public class WorkspacesService {
                 );
     }
 
+    /**
+     * Update photo of given {@link Workspace}.
+     *
+     * @param workspaceId workspace to update
+     * @param photoUrl new photo url
+     */
     @Transactional
     public void uploadPhoto(
             @Nonnull UUID workspaceId,
@@ -139,6 +178,12 @@ public class WorkspacesService {
                 .where("_id", workspaceId);
     }
 
+    /**
+     * Delete given {@link Workspace}.
+     *
+     * @param workspaceId workspace to delete
+     * @param userId workspace owner
+     */
     @Transactional
     public void delete(@Nonnull UUID workspaceId, @Nonnull String userId) {
         if (!isWorkspaceOwner(workspaceId, userId)) {
