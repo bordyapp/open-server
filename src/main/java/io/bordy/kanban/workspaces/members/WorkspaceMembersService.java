@@ -20,6 +20,13 @@ import java.util.UUID;
 @ApplicationScoped
 public class WorkspaceMembersService {
 
+    /**
+     * Check is given user is member of given workspace or not.
+     *
+     * @param workspaceId workspace to check
+     * @param userId user to check
+     * @return is given user is member of given workspace or not
+     */
     public boolean isMemberOf(@Nonnull UUID workspaceId, @Nonnull String userId) {
         return WorkspaceMember.count(
                 "workspaceId = ?1 and userId = ?2",
@@ -28,11 +35,23 @@ public class WorkspaceMembersService {
         ) > 0;
     }
 
+    /**
+     * Get all members of given workspace.
+     *
+     * @param workspaceId workspace to check
+     * @return all members of given workspace if any
+     */
     @Nonnull
     public List<WorkspaceMember> membersOf(@Nonnull UUID workspaceId) {
         return WorkspaceMember.list("workspaceId", workspaceId);
     }
 
+    /**
+     * Get list of {@link WorkspaceMember#getUserId()} of members of given workspace.
+     *
+     * @param workspaceId workspace to check
+     * @return list of {@link WorkspaceMember#getUserId()} of members of given workspace if any
+     */
     @Nonnull
     public List<String> memberUserIdsOf(@Nonnull UUID workspaceId) {
         return WorkspaceMember.find("workspaceId", workspaceId)
@@ -42,9 +61,10 @@ public class WorkspaceMembersService {
     }
 
     /**
-     * Return workspace ids where given user is member
+     * Get list of {@link WorkspaceMember#getWorkspaceId()} where given user is member.
+     *
      * @param userId user to search
-     * @return list of ids
+     * @return list of {@link WorkspaceMember#getWorkspaceId()} if any
      */
     @Nonnull
     public List<UUID> memberOf(@Nonnull String userId) {
@@ -54,6 +74,13 @@ public class WorkspaceMembersService {
                 .toList();
     }
 
+    /**
+     * Add given user to workspace with given {@link WorkspaceInvite}
+     *
+     * @param userId user to add
+     * @param invite invite to use
+     * @return user as workspace member
+     */
     @Nonnull
     @Transactional
     public WorkspaceMember create(@Nonnull String userId, @Nonnull WorkspaceInvite invite) {
@@ -74,6 +101,12 @@ public class WorkspaceMembersService {
         return workspaceMember;
     }
 
+    /**
+     * Get user as {@link WorkspaceMember} where he is member.
+     *
+     * @param userId user to get
+     * @return user as {@link WorkspaceMember} if he is member
+     */
     @CheckForNull
     public WorkspaceMember find(@Nonnull String userId) {
         return WorkspaceMember.<WorkspaceMember>list("userId", userId).stream()
@@ -81,6 +114,13 @@ public class WorkspaceMembersService {
                 .orElse(null);
     }
 
+    /**
+     * Update user as {@link WorkspaceMember} where he is member.
+     *
+     * @param workspaceId workspace where user is member of
+     * @param memberId user member id
+     * @param updateWorkspaceMemberDto changes to apply
+     */
     @Transactional
     public void update(
             @Nonnull String workspaceId,
@@ -99,6 +139,12 @@ public class WorkspaceMembersService {
         );
     }
 
+    /**
+     * Delete user from workspace where he is member.
+     *
+     * @param workspaceId workspace where user is member of
+     * @param memberId user member id
+     */
     @Transactional
     public void delete(@Nonnull String workspaceId, @Nonnull String memberId) {
         WorkspaceMember.delete(
@@ -108,6 +154,11 @@ public class WorkspaceMembersService {
         );
     }
 
+    /**
+     * Delete all members from given workspace.
+     *
+     * @param workspaceId workspace to clear from member
+     */
     @Transactional
     public void deleteAll(@Nonnull UUID workspaceId) {
         WorkspaceMember.delete("workspaceId = ?1", workspaceId);
