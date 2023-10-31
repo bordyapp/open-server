@@ -4,6 +4,7 @@ import io.bordy.cards.BoardListCard;
 import io.bordy.cards.BoardListCardsRepository;
 import io.bordy.cards.comments.Comment;
 import io.bordy.files.File;
+import io.bordy.kanban.workspaces.invites.WorkspaceInvitesRepository;
 import io.bordy.kanban.workspaces.members.WorkspaceMembersService;
 import io.bordy.kanban.workspaces.workspaces.Workspace;
 import io.bordy.lists.BoardList;

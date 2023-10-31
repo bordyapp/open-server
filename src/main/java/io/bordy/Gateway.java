@@ -3,6 +3,8 @@ package io.bordy;
 import io.bordy.api.*;
 import io.bordy.cards.BoardListCardsRepository;
 import io.bordy.cards.BoardListCardsService;
+import io.bordy.kanban.workspaces.invites.WorkspaceInviteStatus;
+import io.bordy.kanban.workspaces.invites.WorkspaceInvitesRepository;
 import io.bordy.kanban.workspaces.members.WorkspaceMembersService;
 import io.bordy.lexorank.Lexorank;
 import io.bordy.lists.BoardList;

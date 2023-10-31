@@ -3,7 +3,7 @@ package io.bordy.kanban.workspaces.members;
 import io.bordy.api.UpdateWorkspaceMemberDto;
 import io.bordy.kanban.workspaces.members.projections.WorkspaceMemberUserId;
 import io.bordy.kanban.workspaces.members.projections.WorkspaceMemberWorkspaceId;
-import io.bordy.workspaces.WorkspaceInvite;
+import io.bordy.kanban.workspaces.invites.WorkspaceInvite;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;

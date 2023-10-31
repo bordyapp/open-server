@@ -1,6 +1,6 @@
 package io.bordy.api;
 
-import io.bordy.workspaces.WorkspaceInvite;
+import io.bordy.kanban.workspaces.invites.WorkspaceInvite;
 
 import java.util.Date;
 import java.util.List;

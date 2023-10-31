@@ -5,7 +5,7 @@ import io.bordy.api.UpdateWorkspaceMemberDto;
 import io.bordy.api.WorkspaceDto;
 import io.bordy.storage.CloudStorage;
 import io.bordy.kanban.workspaces.members.WorkspaceMembersService;
-import io.bordy.workspaces.invites.WorkspaceInvitesService;
+import io.bordy.kanban.workspaces.invites.WorkspaceInvitesService;
 import io.bordy.kanban.workspaces.workspaces.WorkspacesService;
 import io.quarkus.security.Authenticated;
 import org.eclipse.microprofile.jwt.JsonWebToken;

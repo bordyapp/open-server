@@ -1,4 +1,4 @@
-package io.bordy.workspaces;
+package io.bordy.kanban.workspaces.invites;
 
 public enum WorkspaceInviteStatus {
 
