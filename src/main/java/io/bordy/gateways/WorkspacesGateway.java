@@ -189,15 +189,15 @@ public class WorkspacesGateway {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
-        var invite = workspaceInvitesService.create(
-                UUID.fromString(workspaceId),
-                inviteDto.email(),
-                inviteDto.name(),
-                inviteDto.role(),
-                inviteDto.responsibilities()
-        );
-
-        return Response.ok(invite).build();
+        try {
+            return Response.ok(
+                    workspaceInvitesService.create(
+                            UUID.fromString(workspaceId), inviteDto
+                    )
+            ).build();
+        } catch (Exception e) {
+            return Response.ok().build();
+        }
     }
 
     @DELETE()
