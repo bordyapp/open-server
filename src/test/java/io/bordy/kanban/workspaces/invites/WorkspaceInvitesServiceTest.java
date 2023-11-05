@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @QuarkusTest
@@ -423,6 +424,156 @@ public class WorkspaceInvitesServiceTest {
         Assertions.assertEquals(
                 createdInvite, WorkspaceInvite.findById(createdInvite.getId()),
                 "Created and found invites must be equals"
+        );
+    }
+
+    @Test
+    @DisplayName("delete: Delete nothing when workspace and invite doesnt exist")
+    public void deleteNothingWhenWorkspaceAndInviteDoesntExist() {
+        var workspaceId = UUID.randomUUID();
+        var email = "user@email";
+        var name = "name";
+        var role = "role";
+        var responsibilities = "responsibilities";
+        var inviteDto = new CreateInviteDto(email, name, role, responsibilities);
+
+        var date = new Date();
+        var invite = new WorkspaceInvite(
+                UUID.randomUUID(),
+                workspaceId,
+                inviteDto.email(),
+                inviteDto.name(),
+                inviteDto.role(),
+                inviteDto.responsibilities(),
+                WorkspaceInviteStatus.PENDING,
+                date,
+                date
+        );
+        invite.persist();
+
+        workspaceInvitesService.delete(UUID.randomUUID(), UUID.randomUUID());
+        Assertions.assertEquals(
+                1, WorkspaceInvite.count(),
+                "Must delete nothing when workspace and invite doesnt exist"
+        );
+        Assertions.assertEquals(
+                List.of(invite), WorkspaceInvite.<WorkspaceInvite>listAll(),
+                "Must not modify invite"
+        );
+    }
+
+    @Test
+    @DisplayName("delete: Delete nothing when workspace doesn't exist but invite does")
+    public void deleteNothingWhenWorkspaceDoesntExistButInviteDoes() {
+        var workspaceId = UUID.randomUUID();
+        var email = "user@email";
+        var name = "name";
+        var role = "role";
+        var responsibilities = "responsibilities";
+        var inviteDto = new CreateInviteDto(email, name, role, responsibilities);
+
+        var date = new Date();
+        var invite = new WorkspaceInvite(
+                UUID.randomUUID(),
+                workspaceId,
+                inviteDto.email(),
+                inviteDto.name(),
+                inviteDto.role(),
+                inviteDto.responsibilities(),
+                WorkspaceInviteStatus.PENDING,
+                date,
+                date
+        );
+        invite.persist();
+
+        workspaceInvitesService.delete(invite.getId(), UUID.randomUUID());
+        Assertions.assertEquals(
+                1, WorkspaceInvite.count(),
+                "Must delete nothing when workspace doesn't exist but invite does"
+        );
+        Assertions.assertEquals(
+                List.of(invite), WorkspaceInvite.<WorkspaceInvite>listAll(),
+                "Must not modify invite"
+        );
+    }
+
+    @Test
+    @DisplayName("delete: Delete nothing when workspace exists but invite doesn't")
+    public void deleteNothingWhenWorkspaceExistsButInviteDoesnt() {
+        var workspaceId = UUID.randomUUID();
+        var email = "user@email";
+        var name = "name";
+        var role = "role";
+        var responsibilities = "responsibilities";
+        var inviteDto = new CreateInviteDto(email, name, role, responsibilities);
+
+        var date = new Date();
+        var invite = new WorkspaceInvite(
+                UUID.randomUUID(),
+                workspaceId,
+                inviteDto.email(),
+                inviteDto.name(),
+                inviteDto.role(),
+                inviteDto.responsibilities(),
+                WorkspaceInviteStatus.PENDING,
+                date,
+                date
+        );
+        invite.persist();
+
+        workspaceInvitesService.delete(UUID.randomUUID(), workspaceId);
+        Assertions.assertEquals(
+                1, WorkspaceInvite.count(),
+                "Must delete nothing when workspace exists but invite doesn't"
+        );
+        Assertions.assertEquals(
+                List.of(invite), WorkspaceInvite.<WorkspaceInvite>listAll(),
+                "Must not modify invite"
+        );
+    }
+
+    @Test
+    @DisplayName("delete")
+    public void delete() {
+        var workspaceId = UUID.randomUUID();
+        var inviteDto = new CreateInviteDto("user@email", "name", "role", "responsibilities");
+
+        var date = new Date();
+        var invite = new WorkspaceInvite(
+                UUID.randomUUID(),
+                workspaceId,
+                inviteDto.email(),
+                inviteDto.name(),
+                inviteDto.role(),
+                inviteDto.responsibilities(),
+                WorkspaceInviteStatus.PENDING,
+                date,
+                date
+        );
+        invite.persist();
+
+        var inviteDto2 = new CreateInviteDto("user@email", "name", "role", "responsibilities");
+        var invite2 = new WorkspaceInvite(
+                UUID.randomUUID(),
+                workspaceId,
+                inviteDto2.email(),
+                inviteDto2.name(),
+                inviteDto2.role(),
+                inviteDto2.responsibilities(),
+                WorkspaceInviteStatus.PENDING,
+                date,
+                date
+        );
+        invite2.persist();
+
+        workspaceInvitesService.delete(invite.getId(), workspaceId);
+        Assertions.assertNull(
+                WorkspaceInvite.findById(invite.getId()),
+                "Must delete given invite"
+        );
+        Assertions.assertEquals(
+                List.of(invite2), WorkspaceInvite.<WorkspaceInvite>listAll(),
+                "Must delete only given invite"
         );
     }
 
