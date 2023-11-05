@@ -206,7 +206,7 @@ public class WorkspaceInvitesServiceTest {
 
     @Test
     @DisplayName("exists: Return false when workspace exists but email doesn't")
-    public void existsReturnNullWhenWorkspaceExistsButEmailDoesnt() {
+    public void existsReturnFalseWhenWorkspaceExistsButEmailDoesnt() {
         var workspaceId = UUID.randomUUID();
         var email = "user@email";
         var name = "name";
