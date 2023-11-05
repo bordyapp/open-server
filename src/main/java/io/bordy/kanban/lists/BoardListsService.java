@@ -4,7 +4,7 @@ import io.bordy.api.*;
 import io.bordy.kanban.cards.BoardListCard;
 import io.bordy.kanban.cards.BoardListCardStatus;
 import io.bordy.kanban.cards.BoardListCardsRepository;
-import io.bordy.lexorank.Lexorank;
+import io.bordy.kanban.utils.Lexorank;
 import io.bordy.kanban.workspaces.elements.WorkspaceElement;
 import io.bordy.kanban.workspaces.elements.WorkspaceElementType;
 import io.bordy.kanban.workspaces.elements.WorkspaceElementsRepository;

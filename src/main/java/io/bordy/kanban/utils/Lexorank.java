@@ -1,4 +1,4 @@
-package io.bordy.lexorank;
+package io.bordy.kanban.utils;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;

@@ -10,7 +10,7 @@ import io.bordy.kanban.workspaces.elements.WorkspaceElementsService;
 import io.bordy.kanban.workspaces.invites.WorkspaceInviteStatus;
 import io.bordy.kanban.workspaces.invites.WorkspaceInvitesRepository;
 import io.bordy.kanban.workspaces.members.WorkspaceMembersService;
-import io.bordy.lexorank.Lexorank;
+import io.bordy.kanban.utils.Lexorank;
 import io.bordy.kanban.lists.BoardList;
 import io.bordy.kanban.lists.BoardListsRepository;
 import io.bordy.kanban.lists.BoardListsService;
