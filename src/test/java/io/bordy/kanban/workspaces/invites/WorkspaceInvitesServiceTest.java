@@ -235,6 +235,36 @@ public class WorkspaceInvitesServiceTest {
     }
 
     @Test
+    @DisplayName("exists: Return false when workspace and email exist but invite accepted")
+    public void existsReturnFalseWhenWorkspaceAndEmailExistButInviteAccepted() {
+        var workspaceId = UUID.randomUUID();
+        var email = "user@email";
+        var name = "name";
+        var role = "role";
+        var responsibilities = "responsibilities";
+        var inviteDto = new CreateInviteDto(email, name, role, responsibilities);
+
+        var date = new Date();
+        var invite = new WorkspaceInvite(
+                UUID.randomUUID(),
+                workspaceId,
+                inviteDto.email(),
+                inviteDto.name(),
+                inviteDto.role(),
+                inviteDto.responsibilities(),
+                WorkspaceInviteStatus.ACCEPTED,
+                date,
+                date
+        );
+        invite.persist();
+
+        Assertions.assertFalse(
+                workspaceInvitesService.exists(workspaceId, "email@domain"),
+                "Must return false when workspace and email exist but invite accepted"
+        );
+    }
+
+    @Test
     @DisplayName("exists")
     public void exists() {
         var workspaceId = UUID.randomUUID();
