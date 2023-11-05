@@ -1,4 +1,4 @@
-package io.bordy.workspaces;
+package io.bordy.kanban.workspaces.elements;
 
 import io.bordy.api.*;
 import io.bordy.cards.BoardListCardStatus;

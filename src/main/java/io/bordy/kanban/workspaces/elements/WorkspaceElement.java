@@ -1,4 +1,4 @@
-package io.bordy.workspaces;
+package io.bordy.kanban.workspaces.elements;
 
 import io.quarkus.mongodb.panache.PanacheMongoEntityBase;
 import io.quarkus.mongodb.panache.common.MongoEntity;

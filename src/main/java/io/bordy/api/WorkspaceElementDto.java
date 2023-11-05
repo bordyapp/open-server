@@ -1,6 +1,6 @@
 package io.bordy.api;
 
-import io.bordy.workspaces.WorkspaceElementType;
+import io.bordy.kanban.workspaces.elements.WorkspaceElementType;
 
 import java.util.Date;
 import java.util.List;

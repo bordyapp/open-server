@@ -5,9 +5,9 @@ import io.bordy.api.WorkspaceElementDto;
 import io.bordy.api.WriteBoardListCardDto;
 import io.bordy.lexorank.Lexorank;
 import io.bordy.lists.BoardListsService;
-import io.bordy.workspaces.WorkspaceElement;
-import io.bordy.workspaces.WorkspaceElementType;
-import io.bordy.workspaces.WorkspaceElementsRepository;
+import io.bordy.kanban.workspaces.elements.WorkspaceElement;
+import io.bordy.kanban.workspaces.elements.WorkspaceElementType;
+import io.bordy.kanban.workspaces.elements.WorkspaceElementsRepository;
 import org.bson.Document;
 
 import javax.enterprise.context.ApplicationScoped;
