@@ -1,7 +1,7 @@
 package io.bordy.gateways.comments;
 
 import io.bordy.Gandalf;
-import io.bordy.cards.comments.CommentsService;
+import io.bordy.kanban.cards.comments.CommentsService;
 import io.quarkus.security.Authenticated;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 

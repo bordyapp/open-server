@@ -1,6 +1,6 @@
-package io.bordy.cards.cards;
+package io.bordy.kanban.cards.cards;
 
-import io.bordy.cards.BoardListCard;
+import io.bordy.kanban.cards.BoardListCard;
 import io.quarkus.mongodb.panache.common.ProjectionFor;
 
 import java.util.Set;

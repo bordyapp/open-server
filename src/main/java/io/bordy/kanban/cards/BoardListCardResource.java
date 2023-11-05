@@ -1,4 +1,4 @@
-package io.bordy.cards;
+package io.bordy.kanban.cards;
 
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import lombok.AllArgsConstructor;

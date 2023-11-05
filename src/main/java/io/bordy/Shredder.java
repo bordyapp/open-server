@@ -1,8 +1,8 @@
 package io.bordy;
 
-import io.bordy.cards.BoardListCard;
-import io.bordy.cards.BoardListCardsRepository;
-import io.bordy.cards.comments.Comment;
+import io.bordy.kanban.cards.BoardListCard;
+import io.bordy.kanban.cards.BoardListCardsRepository;
+import io.bordy.kanban.cards.comments.Comment;
 import io.bordy.files.File;
 import io.bordy.kanban.workspaces.elements.WorkspaceElement;
 import io.bordy.kanban.workspaces.elements.WorkspaceElementsRepository;

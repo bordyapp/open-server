@@ -1,9 +1,9 @@
 package io.bordy.kanban.lists;
 
 import io.bordy.api.*;
-import io.bordy.cards.BoardListCard;
-import io.bordy.cards.BoardListCardStatus;
-import io.bordy.cards.BoardListCardsRepository;
+import io.bordy.kanban.cards.BoardListCard;
+import io.bordy.kanban.cards.BoardListCardStatus;
+import io.bordy.kanban.cards.BoardListCardsRepository;
 import io.bordy.lexorank.Lexorank;
 import io.bordy.kanban.workspaces.elements.WorkspaceElement;
 import io.bordy.kanban.workspaces.elements.WorkspaceElementType;

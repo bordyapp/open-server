@@ -2,8 +2,8 @@ package io.bordy.users;
 
 import io.bordy.api.AssigneeDto;
 import io.bordy.api.UserDto;
-import io.bordy.cards.BoardListCard;
-import io.bordy.cards.cards.CardAssigneesProjection;
+import io.bordy.kanban.cards.BoardListCard;
+import io.bordy.kanban.cards.cards.CardAssigneesProjection;
 import io.bordy.kanban.workspaces.members.WorkspaceMember;
 import io.bordy.kanban.workspaces.members.WorkspaceMembersService;
 import io.bordy.kanban.workspaces.workspaces.WorkspacesService;

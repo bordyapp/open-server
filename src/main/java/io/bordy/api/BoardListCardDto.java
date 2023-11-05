@@ -1,8 +1,8 @@
 package io.bordy.api;
 
-import io.bordy.cards.BoardListCardPriority;
-import io.bordy.cards.BoardListCardResource;
-import io.bordy.cards.BoardListCardStatus;
+import io.bordy.kanban.cards.BoardListCardPriority;
+import io.bordy.kanban.cards.BoardListCardResource;
+import io.bordy.kanban.cards.BoardListCardStatus;
 
 import java.util.Date;
 import java.util.List;

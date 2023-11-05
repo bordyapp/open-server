@@ -1,4 +1,4 @@
-package io.bordy.cards.comments;
+package io.bordy.kanban.cards.comments;
 
 import io.bordy.gateways.comments.CommentCreatorDto;
 import io.bordy.gateways.comments.ReadCommentDto;

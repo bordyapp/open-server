@@ -1,4 +1,4 @@
-package io.bordy.cards.comments;
+package io.bordy.kanban.cards.comments;
 
 import io.quarkus.mongodb.panache.PanacheMongoEntityBase;
 import io.quarkus.mongodb.panache.common.MongoEntity;

@@ -1,4 +1,4 @@
-package io.bordy.cards;
+package io.bordy.kanban.cards;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

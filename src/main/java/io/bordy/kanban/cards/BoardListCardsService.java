@@ -1,4 +1,4 @@
-package io.bordy.cards;
+package io.bordy.kanban.cards;
 
 import io.bordy.api.SharingDto;
 import io.bordy.api.WorkspaceElementDto;
