@@ -24,6 +24,126 @@ public class WorkspaceInvitesServiceTest {
     WorkspaceInvitesService workspaceInvitesService;
 
     @Test
+    @DisplayName("find: Return null when workspace and email doesnt exist")
+    public void findReturnNullWhenWorkspaceAndEmailDoesntExist() {
+        var workspaceId = UUID.randomUUID();
+        var email = "user@email";
+        var name = "name";
+        var role = "role";
+        var responsibilities = "responsibilities";
+        var inviteDto = new CreateInviteDto(email, name, role, responsibilities);
+
+        var date = new Date();
+        var invite = new WorkspaceInvite(
+                UUID.randomUUID(),
+                workspaceId,
+                inviteDto.email(),
+                inviteDto.name(),
+                inviteDto.role(),
+                inviteDto.responsibilities(),
+                WorkspaceInviteStatus.PENDING,
+                date,
+                date
+        );
+        invite.persist();
+
+        Assertions.assertNull(
+                workspaceInvitesService.find(UUID.randomUUID(), "email@domain"),
+                "Must return null when workspace and email doesnt exist"
+        );
+    }
+
+    @Test
+    @DisplayName("find: Return null when workspace doesn't exist but email does")
+    public void findReturnNullWhenWorkspaceDoesntExistButEmailDoes() {
+        var workspaceId = UUID.randomUUID();
+        var email = "user@email";
+        var name = "name";
+        var role = "role";
+        var responsibilities = "responsibilities";
+        var inviteDto = new CreateInviteDto(email, name, role, responsibilities);
+
+        var date = new Date();
+        var invite = new WorkspaceInvite(
+                UUID.randomUUID(),
+                workspaceId,
+                inviteDto.email(),
+                inviteDto.name(),
+                inviteDto.role(),
+                inviteDto.responsibilities(),
+                WorkspaceInviteStatus.PENDING,
+                date,
+                date
+        );
+        invite.persist();
+
+        Assertions.assertNull(
+                workspaceInvitesService.find(UUID.randomUUID(), email),
+                "Must return null when workspace doesn't exist but email does"
+        );
+    }
+
+    @Test
+    @DisplayName("find: Return null when workspace exists but email doesn't")
+    public void findReturnNullWhenWorkspaceExistsButEmailDoesnt() {
+        var workspaceId = UUID.randomUUID();
+        var email = "user@email";
+        var name = "name";
+        var role = "role";
+        var responsibilities = "responsibilities";
+        var inviteDto = new CreateInviteDto(email, name, role, responsibilities);
+
+        var date = new Date();
+        var invite = new WorkspaceInvite(
+                UUID.randomUUID(),
+                workspaceId,
+                inviteDto.email(),
+                inviteDto.name(),
+                inviteDto.role(),
+                inviteDto.responsibilities(),
+                WorkspaceInviteStatus.PENDING,
+                date,
+                date
+        );
+        invite.persist();
+
+        Assertions.assertNull(
+                workspaceInvitesService.find(workspaceId, "email@domain"),
+                "Must return null when workspace exists but email doesn't"
+        );
+    }
+
+    @Test
+    @DisplayName("find")
+    public void find() {
+        var workspaceId = UUID.randomUUID();
+        var email = "user@email";
+        var name = "name";
+        var role = "role";
+        var responsibilities = "responsibilities";
+        var inviteDto = new CreateInviteDto(email, name, role, responsibilities);
+
+        var date = new Date();
+        var invite = new WorkspaceInvite(
+                UUID.randomUUID(),
+                workspaceId,
+                inviteDto.email(),
+                inviteDto.name(),
+                inviteDto.role(),
+                inviteDto.responsibilities(),
+                WorkspaceInviteStatus.PENDING,
+                date,
+                date
+        );
+        invite.persist();
+
+        Assertions.assertEquals(
+                invite, workspaceInvitesService.find(workspaceId, email),
+                "Must find correct invite"
+        );
+    }
+
+    @Test
     @DisplayName("create: Throw exception when workspace doesn't exist")
     public void createThrowExceptionWhenWorkspaceDoesntExist() {
         var workspaceId = UUID.randomUUID();
