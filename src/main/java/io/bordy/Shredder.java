@@ -9,8 +9,8 @@ import io.bordy.kanban.workspaces.elements.WorkspaceElementsRepository;
 import io.bordy.kanban.workspaces.invites.WorkspaceInvitesRepository;
 import io.bordy.kanban.workspaces.members.WorkspaceMembersService;
 import io.bordy.kanban.workspaces.workspaces.Workspace;
-import io.bordy.lists.BoardList;
-import io.bordy.lists.BoardListsRepository;
+import io.bordy.kanban.lists.BoardList;
+import io.bordy.kanban.lists.BoardListsRepository;
 
 import javax.annotation.Nonnull;
 import javax.enterprise.context.ApplicationScoped;

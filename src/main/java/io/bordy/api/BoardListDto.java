@@ -1,6 +1,6 @@
 package io.bordy.api;
 
-import io.bordy.lists.BoardListResource;
+import io.bordy.kanban.lists.BoardListResource;
 
 import java.util.Date;
 import java.util.List;

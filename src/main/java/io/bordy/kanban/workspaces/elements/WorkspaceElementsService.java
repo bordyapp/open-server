@@ -4,7 +4,7 @@ import io.bordy.api.*;
 import io.bordy.cards.BoardListCardStatus;
 import io.bordy.cards.BoardListCardsRepository;
 import io.bordy.cards.comments.Comment;
-import io.bordy.lists.BoardListsRepository;
+import io.bordy.kanban.lists.BoardListsRepository;
 import io.bordy.users.UsersService;
 import io.quarkus.panache.common.Sort;
 

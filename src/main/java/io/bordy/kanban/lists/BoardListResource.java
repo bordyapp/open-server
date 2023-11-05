@@ -1,4 +1,4 @@
-package io.bordy.lists;
+package io.bordy.kanban.lists;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package io.bordy.lists;
+package io.bordy.kanban.lists;
 
 import io.quarkus.mongodb.panache.PanacheMongoEntityBase;
 import io.quarkus.mongodb.panache.common.MongoEntity;

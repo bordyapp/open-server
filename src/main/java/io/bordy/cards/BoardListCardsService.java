@@ -4,7 +4,7 @@ import io.bordy.api.SharingDto;
 import io.bordy.api.WorkspaceElementDto;
 import io.bordy.api.WriteBoardListCardDto;
 import io.bordy.lexorank.Lexorank;
-import io.bordy.lists.BoardListsService;
+import io.bordy.kanban.lists.BoardListsService;
 import io.bordy.kanban.workspaces.elements.WorkspaceElement;
 import io.bordy.kanban.workspaces.elements.WorkspaceElementType;
 import io.bordy.kanban.workspaces.elements.WorkspaceElementsRepository;

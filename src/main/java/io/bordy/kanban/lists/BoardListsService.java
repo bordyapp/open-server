@@ -1,4 +1,4 @@
-package io.bordy.lists;
+package io.bordy.kanban.lists;
 
 import io.bordy.api.*;
 import io.bordy.cards.BoardListCard;
