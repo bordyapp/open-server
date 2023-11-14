@@ -1,8 +1,9 @@
-package io.bordy.gateways;
+package io.bordy.kanban.api.gateways.workspaces.workspaces;
 
-import io.bordy.api.CreateWorkspaceDto;
+import io.bordy.kanban.api.gateways.workspaces.workspaces.dto.CreateWorkspaceDto;
 import io.bordy.api.UpdateWorkspaceMemberDto;
-import io.bordy.api.WorkspaceDto;
+import io.bordy.kanban.api.gateways.workspaces.workspaces.dto.WorkspaceDto;
+import io.bordy.gateways.CreateInviteDto;
 import io.bordy.storage.CloudStorage;
 import io.bordy.kanban.workspaces.members.WorkspaceMembersService;
 import io.bordy.kanban.workspaces.invites.WorkspaceInvitesService;

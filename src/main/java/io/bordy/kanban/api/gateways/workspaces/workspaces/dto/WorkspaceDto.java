@@ -1,5 +1,6 @@
-package io.bordy.api;
+package io.bordy.kanban.api.gateways.workspaces.workspaces.dto;
 
+import io.bordy.api.UserDto;
 import io.bordy.kanban.workspaces.invites.WorkspaceInvite;
 
 import java.util.Date;

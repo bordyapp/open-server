@@ -1,7 +1,7 @@
 package io.bordy.kanban.workspaces.workspaces;
 
 import io.bordy.api.UserDto;
-import io.bordy.api.WorkspaceDto;
+import io.bordy.kanban.api.gateways.workspaces.workspaces.dto.WorkspaceDto;
 import io.bordy.kanban.workspaces.members.WorkspaceMembersService;
 import io.bordy.users.User;
 import io.bordy.kanban.workspaces.invites.WorkspaceInvite;

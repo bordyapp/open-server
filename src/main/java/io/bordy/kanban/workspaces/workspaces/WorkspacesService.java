@@ -1,7 +1,7 @@
 package io.bordy.kanban.workspaces.workspaces;
 
 import io.bordy.Shredder;
-import io.bordy.api.WorkspaceDto;
+import io.bordy.kanban.api.gateways.workspaces.workspaces.dto.WorkspaceDto;
 import io.bordy.kanban.workspaces.invites.WorkspaceInviteStatus;
 import io.bordy.kanban.workspaces.invites.WorkspaceInvitesRepository;
 import io.bordy.kanban.workspaces.members.WorkspaceMembersService;
