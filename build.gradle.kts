@@ -34,6 +34,10 @@ dependencies {
 //    implementation("io.quarkus:quarkus-smallrye-jwt")
 //    implementation("io.quarkus:quarkus-smallrye-jwt-build")
     implementation("io.quarkus:quarkus-oidc")
+    testImplementation("io.quarkus:quarkus-test-oidc-server")
+    testImplementation("io.quarkus:quarkus-test-security")
+//    testImplementation("io.quarkus:quarkus-test-security-jwt")
+    testImplementation("io.quarkus:quarkus-test-security-oidc")
 
     // Emails
     implementation("javax.mail:mail:1.4.7")
