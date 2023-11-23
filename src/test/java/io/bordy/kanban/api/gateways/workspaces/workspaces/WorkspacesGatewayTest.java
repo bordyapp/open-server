@@ -1,9 +1,11 @@
 package io.bordy.kanban.api.gateways.workspaces.workspaces;
 
+import io.bordy.kanban.api.gateways.workspaces.workspaces.dto.CreateWorkspaceDto;
 import io.bordy.kanban.api.gateways.workspaces.workspaces.dto.WorkspaceDto;
 import io.bordy.kanban.workspaces.invites.WorkspaceInvite;
 import io.bordy.kanban.workspaces.invites.WorkspaceInviteStatus;
 import io.bordy.kanban.workspaces.members.WorkspaceMembersService;
+import io.bordy.kanban.workspaces.workspaces.Workspace;
 import io.bordy.kanban.workspaces.workspaces.WorkspacesService;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
@@ -13,12 +15,16 @@ import io.quarkus.test.security.oidc.OidcSecurity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.inject.Inject;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @QuarkusTest
 @TestTransaction
@@ -171,6 +177,36 @@ public class WorkspacesGatewayTest {
         Assertions.assertEquals(
                 summerWorkspaces, workspacesGateway.myWorkspaces(),
                 "Must return only workspaces created by user"
+        );
+    }
+
+    public static Stream<Arguments> workspacesToCreate() {
+        return Stream.of(
+                Arguments.of(new CreateWorkspaceDto("")),
+                Arguments.of(new CreateWorkspaceDto(" ")),
+                Arguments.of(new CreateWorkspaceDto("Workspace to create"))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("workspacesToCreate")
+    @DisplayName("create: create workspace")
+    public void create(CreateWorkspaceDto createWorkspaceDto) {
+        var createdWorkspace = workspacesGateway.create(createWorkspaceDto);
+        var persistedWorkspace = Workspace.<Workspace>findById(createdWorkspace.id());
+
+        Assertions.assertNotNull(createdWorkspace, "Workspace must be created");
+        Assertions.assertEquals(
+                createdWorkspace.name(), createWorkspaceDto.name(),
+                "Workspace must be created with given name"
+        );
+        Assertions.assertEquals(
+                createdWorkspace.ownerId(), SUMMER_SMITH,
+                "Workspace must be created with given owner"
+        );
+        Assertions.assertEquals(
+                createdWorkspace, workspacesService.toBaseDto(persistedWorkspace),
+                "Created workspace and persisted workspace must be equal"
         );
     }
 
