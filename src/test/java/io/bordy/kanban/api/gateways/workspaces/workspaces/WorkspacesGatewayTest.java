@@ -331,4 +331,43 @@ public class WorkspacesGatewayTest {
         );
     }
 
+    @Test
+    @DisplayName("uploadPhoto: return forbidden when user is not workspace owner")
+    public void uploadPhotoReturnForbiddenWhenUserIsNotOwner() throws IOException {
+        var rickWorkspaces = createWorkspaces(RICK_SANCHEZ);
+        var workspace = rickWorkspaces.get(0);
+
+        var response = workspacesGateway.uploadPhoto(workspace.id().toString(), null);
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.FORBIDDEN,
+                "Must return FORBIDDEN when user is not workspace owner"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+    }
+
+    @Test
+    @DisplayName("uploadPhoto: return forbidden when workspace doesn't exist")
+    public void uploadPhotoReturnNothingWhenWorkspaceDoesntExist() throws IOException {
+        createWorkspaces(SUMMER_SMITH);
+
+        var response = workspacesGateway.uploadPhoto("93a106b0-7f1f-458d-8810-6ec998065c48", null);
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.FORBIDDEN,
+                "Must return FORBIDDEN when user is not workspace owner"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+    }
+
+    @Test
+    @DisplayName("uploadPhoto: upload photo and return url")
+    public void uploadPhoto() {
+        // TODO: mock S3 and write test
+    }
+
 }
