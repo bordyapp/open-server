@@ -370,4 +370,59 @@ public class WorkspacesGatewayTest {
         // TODO: mock S3 and write test
     }
 
+    @Test
+    @DisplayName("delete: return forbidden when user is not workspace owner")
+    public void deleteReturnForbiddenWhenUserIsNotOwner() {
+        var rickWorkspaces = createWorkspaces(RICK_SANCHEZ);
+        var workspace = rickWorkspaces.get(0);
+
+        var response = workspacesGateway.delete(workspace.id().toString());
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.FORBIDDEN,
+                "Must return FORBIDDEN when user is not workspace owner"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+    }
+
+    @Test
+    @DisplayName("delete: return forbidden when workspace doesn't exist")
+    public void deleteReturnNothingWhenWorkspaceDoesntExist() {
+        createWorkspaces(SUMMER_SMITH);
+
+        var response = workspacesGateway.delete("93a106b0-7f1f-458d-8810-6ec998065c48");
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.FORBIDDEN,
+                "Must return FORBIDDEN when user is not workspace owner"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+    }
+
+    @Test
+    @DisplayName("delete: delete and return nothing")
+    public void delete() {
+        var summerWorkspaces = createWorkspaces(SUMMER_SMITH);
+        var workspace = summerWorkspaces.get(0);
+
+        var response = workspacesGateway.delete(workspace.id().toString());
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.OK,
+                "Must return OK when user is workspace owner"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+
+        Assertions.assertNull(
+                workspacesGateway.find(workspace.id().toString()).getEntity(),
+                "Must delete workspace"
+        );
+    }
+
 }
