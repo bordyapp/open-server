@@ -262,4 +262,73 @@ public class WorkspacesGatewayTest {
         );
     }
 
+    @Test
+    @DisplayName("rename: return forbidden when user is not workspace owner")
+    public void renameReturnForbiddenWhenUserIsNotOwner() {
+        var rickWorkspaces = createWorkspaces(RICK_SANCHEZ);
+        var workspace = rickWorkspaces.get(0);
+
+        var response = workspacesGateway.rename(workspace.id().toString(), new CreateWorkspaceDto("new name"));
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.FORBIDDEN,
+                "Must return FORBIDDEN when user is not workspace owner"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+    }
+
+    @Test
+    @DisplayName("rename: return forbidden when workspace doesn't exist")
+    public void renameReturnNothingWhenWorkspaceDoesntExist() {
+        createWorkspaces(SUMMER_SMITH);
+
+        var response = workspacesGateway.rename("93a106b0-7f1f-458d-8810-6ec998065c48", new CreateWorkspaceDto("new name"));
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.FORBIDDEN,
+                "Must return FORBIDDEN when user is not workspace owner"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+    }
+
+    public static Stream<Arguments> renameWorkspacesTo() {
+        return Stream.of(
+                Arguments.of(new CreateWorkspaceDto("")),
+                Arguments.of(new CreateWorkspaceDto(" ")),
+                Arguments.of(new CreateWorkspaceDto("New name"))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("renameWorkspacesTo")
+    @DisplayName("rename: rename and return nothing")
+    public void rename(CreateWorkspaceDto createWorkspaceDto) {
+        var summerWorkspaces = createWorkspaces(SUMMER_SMITH);
+        var workspace = summerWorkspaces.get(0);
+
+        var response = workspacesGateway.rename(workspace.id().toString(), createWorkspaceDto);
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.OK,
+                "Must return OK"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+
+        var updatedWorkspace = (WorkspaceDto) workspacesGateway.find(workspace.id().toString()).getEntity();
+        Assertions.assertEquals(
+                updatedWorkspace.name(), createWorkspaceDto.name(),
+                "Must rename workspace"
+        );
+        Assertions.assertEquals(
+                updatedWorkspace.name(), createWorkspaceDto.name(),
+                "Must rename workspace"
+        );
+    }
+
 }
