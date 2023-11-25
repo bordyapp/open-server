@@ -20,6 +20,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -207,6 +209,56 @@ public class WorkspacesGatewayTest {
         Assertions.assertEquals(
                 createdWorkspace, workspacesService.toBaseDto(persistedWorkspace),
                 "Created workspace and persisted workspace must be equal"
+        );
+    }
+
+    @Test
+    @DisplayName("find: return forbidden when user is not workspace owner")
+    public void findReturnForbiddenWhenUserIsNotOwner() {
+        var rickWorkspaces = createWorkspaces(RICK_SANCHEZ);
+        var workspace = rickWorkspaces.get(0);
+
+        var response = workspacesGateway.find(workspace.id().toString());
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.FORBIDDEN,
+                "Must return FORBIDDEN when user is not workspace owner"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+    }
+
+    @Test
+    @DisplayName("find: return forbidden when workspace doesn't exist")
+    public void findReturnNothingWhenWorkspaceDoesntExist() {
+        createWorkspaces(SUMMER_SMITH);
+
+        var response = workspacesGateway.find("93a106b0-7f1f-458d-8810-6ec998065c48");
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.FORBIDDEN,
+                "Must return NOT_FOUND when workspace doesn't exist"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+    }
+
+    @Test
+    @DisplayName("find: find and return workspace")
+    public void find() {
+        var summerWorkspaces = createWorkspaces(SUMMER_SMITH);
+        var workspace = summerWorkspaces.get(0);
+
+        var response = workspacesGateway.find(workspace.id().toString());
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.OK,
+                "Must return OK"
+        );
+        Assertions.assertEquals(
+                response.getEntity(), workspace,
+                "Must return correct workspace"
         );
     }
 
