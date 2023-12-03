@@ -1,5 +1,7 @@
 package io.bordy.kanban.api.gateways.workspaces.workspaces;
 
+import io.bordy.api.UpdateWorkspaceMemberDto;
+import io.bordy.api.UserDto;
 import io.bordy.kanban.api.gateways.workspaces.workspaces.dto.CreateWorkspaceDto;
 import io.bordy.kanban.api.gateways.workspaces.workspaces.dto.WorkspaceDto;
 import io.bordy.kanban.workspaces.invites.WorkspaceInvite;
@@ -22,10 +24,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 @QuarkusTest
@@ -422,6 +421,158 @@ public class WorkspacesGatewayTest {
         Assertions.assertNull(
                 workspacesGateway.find(workspace.id().toString()).getEntity(),
                 "Must delete workspace"
+        );
+    }
+
+    @Test
+    @DisplayName("updateMember: return forbidden when user is not workspace owner")
+    public void updateMemberReturnForbiddenWhenUserIsNotOwner() {
+        var rickWorkspaces = createWorkspaces(RICK_SANCHEZ);
+        rickWorkspaces.forEach(
+                workspaceDto -> addUserToWorkspace(
+                        MORTY_SMITH, "Morty", "grandson", "", workspaceDto.id()
+                )
+        );
+        var workspace = rickWorkspaces.get(0);
+        var membersBeforeUpdate = workspaceMembersService.membersOf(workspace.id());
+
+        var response = workspacesGateway.updateMember(
+                workspace.id().toString(), MORTY_SMITH,
+                new UpdateWorkspaceMemberDto("Evil Morty", "Main antagonist of Rick and Morty", "")
+        );
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.FORBIDDEN,
+                "Must return FORBIDDEN when user is not workspace owner"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+
+        var membersAfterUpdate = workspaceMembersService.membersOf(workspace.id());
+        Assertions.assertEquals(
+                membersBeforeUpdate, membersAfterUpdate,
+                "Member MUST not be updated"
+        );
+    }
+
+    @Test
+    @DisplayName("updateMember: return forbidden when workspace doesn't exist")
+    public void updateReturnNothingWhenWorkspaceDoesntExist() {
+        var response = workspacesGateway.updateMember(
+                "93a106b0-7f1f-458d-8810-6ec998065c48", MORTY_SMITH,
+                new UpdateWorkspaceMemberDto("Evil Morty", "Main antagonist of Rick and Morty", "")
+        );
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.FORBIDDEN,
+                "Must return FORBIDDEN when user is not workspace owner"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+    }
+
+    @Test
+    @DisplayName("updateMember: return nothing when workspace member doesn't exist")
+    public void updateMemberReturnNothingWhenWorkspaceMemberDoesntExist() {
+        var summerWorkspaces = createWorkspaces(SUMMER_SMITH);
+        var workspace = summerWorkspaces.get(0);
+        var membersBeforeUpdate = workspaceMembersService.membersOf(workspace.id());
+
+        var response = workspacesGateway.updateMember(
+                workspace.id().toString(), MORTY_SMITH,
+                new UpdateWorkspaceMemberDto("Evil Morty", "Main antagonist of Rick and Morty", "")
+        );
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.OK,
+                "Must return FORBIDDEN when user is not workspace owner"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+
+        var membersAfterUpdate = workspaceMembersService.membersOf(workspace.id());
+        Assertions.assertEquals(
+                membersBeforeUpdate, membersAfterUpdate,
+                "Member MUST not be updated"
+        );
+    }
+
+    public static Stream<Arguments> updateWorkspaceMemberTo() {
+        return Stream.of(
+                Arguments.of(new UpdateWorkspaceMemberDto("", "", "")),
+                Arguments.of(new UpdateWorkspaceMemberDto(" ", " ", " ")),
+                Arguments.of(new UpdateWorkspaceMemberDto("Evil Morty", "Main antagonist of Rick and Morty", ""))
+        );
+    }
+
+    @ParameterizedTest
+    @DisplayName("updateMember")
+    @MethodSource("updateWorkspaceMemberTo")
+    public void updateMember(UpdateWorkspaceMemberDto updateWorkspaceMemberDto) {
+        var rickWorkspaces = createWorkspaces(SUMMER_SMITH);
+        rickWorkspaces.forEach(
+                workspaceDto -> addUserToWorkspace(
+                        MORTY_SMITH, "Morty", "grandson", "", workspaceDto.id()
+                )
+        );
+        var workspace = rickWorkspaces.get(0);
+        var membersBeforeUpdate = workspaceMembersService.membersOf(workspace.id());
+        Assertions.assertEquals(
+                1, membersBeforeUpdate.size(),
+                "MUST be exactly one member"
+        );
+        var memberBeforeUpdate = membersBeforeUpdate.get(0);
+
+        var response = workspacesGateway.updateMember(
+                workspace.id().toString(), MORTY_SMITH,
+                updateWorkspaceMemberDto
+        );
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.OK,
+                "Must return OK"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+
+        var membersAfterUpdate = workspaceMembersService.membersOf(workspace.id());
+        Assertions.assertEquals(
+                1, membersAfterUpdate.size(),
+                "MUST be exactly one member"
+        );
+
+        var memberAfterUpdate = membersAfterUpdate.get(0);
+        Assertions.assertEquals(
+                memberBeforeUpdate.getId(), memberAfterUpdate.getId(),
+                "Id MUST not be updated"
+        );
+        Assertions.assertEquals(
+                memberBeforeUpdate.getWorkspaceId(), memberAfterUpdate.getWorkspaceId(),
+                "Workspace id MUST not be updated"
+        );
+        Assertions.assertEquals(
+                memberBeforeUpdate.getUserId(), memberAfterUpdate.getUserId(),
+                "User id MUST not be updated"
+        );
+        Assertions.assertEquals(
+                updateWorkspaceMemberDto.name(), memberAfterUpdate.getName(),
+                "Name MUST be updated"
+        );
+        Assertions.assertEquals(
+                updateWorkspaceMemberDto.role(), memberAfterUpdate.getRole(),
+                "Role MUST be updated"
+        );
+        Assertions.assertEquals(
+                updateWorkspaceMemberDto.responsibilities(), memberAfterUpdate.getResponsibilities(),
+                "Responsibilities MUST be updated"
+        );
+        Assertions.assertEquals(
+                memberBeforeUpdate.getCreatedAt(), memberAfterUpdate.getCreatedAt(),
+                "Created at MUST not be updated"
         );
     }
 
