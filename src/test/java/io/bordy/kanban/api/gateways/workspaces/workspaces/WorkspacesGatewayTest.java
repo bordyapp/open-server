@@ -576,4 +576,146 @@ public class WorkspacesGatewayTest {
         );
     }
 
+    @Test
+    @DisplayName("deleteMember: return forbidden when user is not workspace owner")
+    public void deleteMemberReturnForbiddenWhenUserIsNotOwner() {
+        var rickWorkspaces = createWorkspaces(RICK_SANCHEZ);
+        rickWorkspaces.forEach(
+                workspaceDto -> addUserToWorkspace(
+                        MORTY_SMITH, "Morty", "grandson", "", workspaceDto.id()
+                )
+        );
+        var workspace = rickWorkspaces.get(0);
+        var membersBeforeUpdate = workspaceMembersService.membersOf(workspace.id());
+
+        var response = workspacesGateway.deleteMember(workspace.id().toString(), MORTY_SMITH);
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.FORBIDDEN,
+                "Must return FORBIDDEN when user is not workspace owner"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+
+        var membersAfterUpdate = workspaceMembersService.membersOf(workspace.id());
+        Assertions.assertEquals(
+                membersBeforeUpdate, membersAfterUpdate,
+                "Member MUST not be updated"
+        );
+    }
+
+    @Test
+    @DisplayName("deleteMember: return forbidden when workspace doesn't exist")
+    public void deleteMemberReturnNothingWhenWorkspaceDoesntExist() {
+        var response = workspacesGateway.deleteMember("93a106b0-7f1f-458d-8810-6ec998065c48", MORTY_SMITH);
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.FORBIDDEN,
+                "Must return FORBIDDEN when workspace doesn't exist"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+    }
+
+    @Test
+    @DisplayName("deleteMember: return forbidden when user tries to delete workspace owner")
+    public void deleteMemberReturnForbiddenWhenUserTriesToDeleteWorkspaceOwner() {
+        var summerWorkspaces = createWorkspaces(SUMMER_SMITH);
+        summerWorkspaces.forEach(workspaceDto -> {
+            addUserToWorkspace(
+                    MORTY_SMITH, "Morty", "grandson", "", workspaceDto.id()
+            );
+            addUserToWorkspace(
+                    SUMMER_SMITH, "Summer", "granddaughter", "", workspaceDto.id()
+            );
+        });
+        var workspace = summerWorkspaces.get(0);
+        var membersBeforeUpdate = workspaceMembersService.membersOf(workspace.id());
+
+        var response = workspacesGateway.deleteMember(workspace.id().toString(), SUMMER_SMITH);
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.FORBIDDEN,
+                "Must return FORBIDDEN when user is not workspace owner"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+
+        var membersAfterUpdate = workspaceMembersService.membersOf(workspace.id());
+        Assertions.assertEquals(
+                membersBeforeUpdate, membersAfterUpdate,
+                "Member MUST not be updated"
+        );
+    }
+
+    @Test
+    @DisplayName("deleteMember: return nothing when workspace member doesn't exist")
+    public void deleteMemberReturnNothingWhenWorkspaceMemberDoesntExist() {
+        var summerWorkspaces = createWorkspaces(SUMMER_SMITH);
+        summerWorkspaces.forEach(workspaceDto -> {
+            addUserToWorkspace(
+                    MORTY_SMITH, "Morty", "grandson", "", workspaceDto.id()
+            );
+            addUserToWorkspace(
+                    SUMMER_SMITH, "Summer", "granddaughter", "", workspaceDto.id()
+            );
+        });
+        var workspace = summerWorkspaces.get(0);
+        var membersBeforeUpdate = workspaceMembersService.membersOf(workspace.id());
+
+        var response = workspacesGateway.deleteMember(workspace.id().toString(), RICK_SANCHEZ);
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.OK,
+                "Must return OK when workspace member doesn't exist"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+
+        var membersAfterUpdate = workspaceMembersService.membersOf(workspace.id());
+        Assertions.assertEquals(
+                membersBeforeUpdate, membersAfterUpdate,
+                "Member MUST not be updated"
+        );
+    }
+
+    @Test
+    @DisplayName("deleteMember")
+    public void deleteMember() {
+        var summerWorkspaces = createWorkspaces(SUMMER_SMITH);
+        summerWorkspaces.forEach(workspaceDto -> {
+            addUserToWorkspace(
+                    MORTY_SMITH, "Morty", "grandson", "", workspaceDto.id()
+            );
+            addUserToWorkspace(
+                    SUMMER_SMITH, "Summer", "granddaughter", "", workspaceDto.id()
+            );
+        });
+        var workspace = summerWorkspaces.get(0);
+        var membersBeforeUpdate = workspaceMembersService.membersOf(workspace.id());
+
+        var response = workspacesGateway.deleteMember(workspace.id().toString(), MORTY_SMITH);
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.OK,
+                "Must return OK when user is not workspace owner"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+
+        membersBeforeUpdate = membersBeforeUpdate.stream()
+                .filter(workspaceMember -> !workspaceMember.getUserId().equals(MORTY_SMITH))
+                .toList();
+        var membersAfterUpdate = workspaceMembersService.membersOf(workspace.id());
+        Assertions.assertEquals(
+                membersBeforeUpdate, membersAfterUpdate,
+                "Member MUST be deleted"
+        );
+    }
+
 }
