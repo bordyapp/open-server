@@ -1,11 +1,12 @@
 package io.bordy.kanban.api.gateways.workspaces.workspaces;
 
 import io.bordy.api.UpdateWorkspaceMemberDto;
-import io.bordy.api.UserDto;
+import io.bordy.gateways.CreateInviteDto;
 import io.bordy.kanban.api.gateways.workspaces.workspaces.dto.CreateWorkspaceDto;
 import io.bordy.kanban.api.gateways.workspaces.workspaces.dto.WorkspaceDto;
 import io.bordy.kanban.workspaces.invites.WorkspaceInvite;
 import io.bordy.kanban.workspaces.invites.WorkspaceInviteStatus;
+import io.bordy.kanban.workspaces.invites.WorkspaceInvitesService;
 import io.bordy.kanban.workspaces.members.WorkspaceMembersService;
 import io.bordy.kanban.workspaces.workspaces.Workspace;
 import io.bordy.kanban.workspaces.workspaces.WorkspacesService;
@@ -40,6 +41,9 @@ public class WorkspacesGatewayTest {
 
     @Inject
     WorkspaceMembersService workspaceMembersService;
+
+    @Inject
+    WorkspaceInvitesService workspaceInvitesService;
 
     @Inject
     WorkspacesGateway workspacesGateway;
@@ -715,6 +719,59 @@ public class WorkspacesGatewayTest {
         Assertions.assertEquals(
                 membersBeforeUpdate, membersAfterUpdate,
                 "Member MUST be deleted"
+        );
+    }
+
+    @Test
+    @DisplayName("createInvite: return forbidden when user is not workspace owner")
+    public void createInviteReturnForbiddenWhenUserIsNotOwner() {
+        var rickWorkspaces = createWorkspaces(RICK_SANCHEZ);
+        var workspace = rickWorkspaces.get(0);
+        var mortyEmail = "morty@smith";
+
+        var response = workspacesGateway.createInvite(
+                workspace.id().toString(),
+                new CreateInviteDto(mortyEmail, "Morty", "grandson", "")
+        );
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.FORBIDDEN,
+                "Must return FORBIDDEN when user is not workspace owner"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+
+        var invite = workspaceInvitesService.find(workspace.id(), mortyEmail);
+        Assertions.assertNull(
+                invite,
+                "Invite MUST not be created"
+        );
+    }
+
+    @Test
+    @DisplayName("createInvite: return forbidden when user is not workspace owner")
+    public void createInviteReturnNothingWhenWorkspaceDoesntExist() {
+        var workspaceId = "93a106b0-7f1f-458d-8810-6ec998065c48";
+        var mortyEmail = "morty@smith";
+
+        var response = workspacesGateway.createInvite(
+                workspaceId,
+                new CreateInviteDto(mortyEmail, "Morty", "grandson", "")
+        );
+        Assertions.assertEquals(
+                response.getStatusInfo(), Response.Status.FORBIDDEN,
+                "Must return FORBIDDEN when user is not workspace owner"
+        );
+        Assertions.assertNull(
+                response.getEntity(),
+                "Response must be without body"
+        );
+
+        var invite = workspaceInvitesService.find(UUID.fromString(workspaceId), mortyEmail);
+        Assertions.assertNull(
+                invite,
+                "Invite MUST not be created"
         );
     }
 
